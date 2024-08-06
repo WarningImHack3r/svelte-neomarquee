@@ -2,6 +2,10 @@
 	"name": "svelte-neomarquee",
 	"version": "1.0.0",
 	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/WarningImHack3r/svelte-neomarquee"
+	},
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build && pnpm run package",

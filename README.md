@@ -1,7 +1,10 @@
-> [!WARNING]
-> Not released yet, fixing some stuff before.
-
 # svelte-neomarquee
+
+![Static Badge](https://img.shields.io/badge/Svelte-orange?logo=svelte&logoColor=white)
+![NPM Version](https://img.shields.io/npm/v/svelte-neomarquee)
+![NPM Downloads](https://img.shields.io/npm/dw/svelte-neomarquee)
+![NPM Type Definitions](https://img.shields.io/npm/types/svelte-neomarquee)
+![NPM License](https://img.shields.io/npm/l/svelte-neomarquee)
 
 An event-driven and feature-rich marquee component for Svelte.
 

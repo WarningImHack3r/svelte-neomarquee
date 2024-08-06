@@ -48,21 +48,23 @@
 	let interval;
 
 	$: if (play) {
-		if (animation) {
+		for (const animation of animations) {
 			animation.play();
-			dispatch("playstart");
-			stopInterval();
-			interval = setInterval(() => {
-				if (!animation) {
-					stopInterval();
-					return;
-				}
-				dispatch("progress", { progress: getProgress(animation) });
-			});
 		}
-	} else if (animation && animation.playState === "running") {
-		animation.pause();
-		dispatch("playpause", { progress: getProgress(animation) });
+		dispatch("playstart");
+		stopInterval();
+		interval = setInterval(() => {
+			if (!animations.length) {
+				stopInterval();
+				return;
+			}
+			dispatch("progress", { progress: getProgress(animations[0]) });
+		});
+	} else if (animations.length && animations[0].playState === "running") {
+		for (const animation of animations) {
+			animation.pause();
+		}
+		dispatch("playpause", { progress: getProgress(animations[0]) });
 		stopInterval();
 	}
 
@@ -83,41 +85,46 @@
 		if (interval) clearInterval(interval);
 	}
 
-	/** @type {HTMLDivElement | undefined} */
-	let marquee;
-	/** @type {Animation | undefined} */
-	let animation;
+	/** @type {HTMLDivElement[]} */
+	let marquees = [];
+	/** @type {Animation[]} */
+	let animations = [];
 	let marqueeWidth = 0;
 	let marqueeHeight = 0;
 
-	$: if (marquee) {
-		animation = marquee.animate(
-			[
+	$: if (marquees.length) {
+		animations = marquees.map((marquee, index) =>
+			marquee.animate(
+				[
+					{
+						transform: `
+						translateX(${direction === "right" ? "-100%" : "0"})
+						translateY(${direction === "down" ? "-100%" : "0"})
+						`
+					},
+					{
+						transform: `
+						translateX(${direction === "left" ? "-100%" : "0"})
+						translateY(${direction === "up" ? "-100%" : "0"})
+						`
+					}
+				],
 				{
-					transform: `
-					translateX(${direction === "left" ? "100%" : direction === "right" ? "-100%" : "0"})
-					translateY(${direction === "up" ? "100%" : direction === "down" ? "-100%" : "0"})
-					`
-				},
-				{
-					transform: `
-					translateX(${direction === "left" ? "-100%" : direction === "right" ? "100%" : "0"})
-					translateY(${direction === "up" ? "-100%" : direction === "down" ? "100%" : "0"})
-					`
+					id: `marquee-${index}`,
+					duration: (duration ?? 1) * 1000,
+					fill: "forwards",
+					iterations: playsCount || Infinity,
+					easing: "linear"
 				}
-			],
-			{
-				id: "marquee",
-				duration: (duration ?? 1) * 1000,
-				fill: "forwards",
-				iterations: playsCount || Infinity,
-				easing: "linear"
-			}
+			)
 		);
-		animation.onfinish = () => {
-			stopInterval();
-			dispatch("playend");
-		};
+		for (const [i, animation] of animations.entries()) {
+			if (i > 0) continue;
+			animation.onfinish = () => {
+				stopInterval();
+				dispatch("playend");
+			};
+		}
 	}
 
 	$: duration =
@@ -126,7 +133,9 @@
 
 	onDestroy(() => {
 		stopInterval();
-		animation?.cancel();
+		for (const animation of animations) {
+			animation.cancel();
+		}
 	});
 </script>
 
@@ -142,11 +151,14 @@
 	{...$$restProps}
 >
 	<div
-		bind:this={marquee}
+		bind:this={marquees[0]}
 		class="marquee"
 		bind:clientWidth={marqueeWidth}
 		bind:clientHeight={marqueeHeight}
 	>
+		<slot />
+	</div>
+	<div bind:this={marquees[1]} class="marquee">
 		<slot />
 	</div>
 </div>
@@ -158,23 +170,23 @@
 		flex-direction: var(--_direction, row);
 		align-items: center;
 		overflow: clip;
-	}
 
-	.marquee-container::before {
-		content: "";
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		z-index: 10;
-		background-image: linear-gradient(
-			to var(--_gradient-direction, right),
-			var(--gradient-color, black),
-			transparent var(--gradient-width, 10%),
-			transparent calc(100% - var(--gradient-width, 10%)),
-			var(--gradient-color, black)
-		);
+		&::before {
+			content: "";
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 10;
+			background-image: linear-gradient(
+				to var(--_gradient-direction, right),
+				var(--gradient-color, black),
+				transparent var(--gradient-width, 10%),
+				transparent calc(100% - var(--gradient-width, 10%)),
+				var(--gradient-color, black)
+			);
+		}
 	}
 
 	.marquee {
@@ -182,6 +194,5 @@
 		flex-direction: var(--_direction, row);
 		gap: var(--gap, 0);
 		align-items: center;
-		min-width: 100%;
 	}
 </style>
