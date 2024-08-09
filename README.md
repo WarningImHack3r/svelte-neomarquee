@@ -38,19 +38,24 @@ yarn add -D svelte-neomarquee
 
 ### Props
 
-|     Name     |                 Type                  | Description                                                | Mandatory | Default value |
-| :----------: | :-----------------------------------: | :--------------------------------------------------------- | :-------: | :-----------: |
-|    `play`    |                boolean                | Whether the marquee should play                            |    No     |    `true`     |
-| `playsCount` |                number                 | The number of times the marquee should play (0 = infinite) |    No     |      `0`      |
-|   `speed`    |                number                 | The speed of the marquee, relative to its width/height     |    No     |     `100`     |
-| `direction`  | `"left" \| "right" \| "up" \| "down"` | The direction of the marquee                               |    No     |   `"right"`   |
-|  `gradient`  |                boolean                | Whether to show a gradient on both ends                    |    No     |    `false`    |
+|          Name          |                 Type                  | Description                                                                                                     | Mandatory | Default value |
+| :--------------------: | :-----------------------------------: | :-------------------------------------------------------------------------------------------------------------- | :-------: | :-----------: |
+|         `play`         |                boolean                | Whether the marquee should play                                                                                 |    No     |    `true`     |
+|      `playsCount`      |                number                 | The number of times the marquee should play (0 = infinite)                                                      |    No     |      `0`      |
+|        `speed`         |                number                 | The speed of the marquee, relative to its width/height                                                          |    No     |     `100`     |
+|      `direction`       | `"left" \| "right" \| "up" \| "down"` | The direction of the marquee                                                                                    |    No     |   `"right"`   |
+|         `mode`         |       `"single" \| "multiple"`        | Whether to repeat the slot content once or multiple times                                                       |    No     | `"multiple"`  |
+|     `showGradient`     |                boolean                | Whether to show a gradient on both ends; takes precedence over `showLeadingGradient` and `showTrailingGradient` |    No     |    `false`    |
+| `showLeadingGradient`  |                boolean                | Whether to show a gradient on the first edge; overwritten by `showGradient`                                     |    No     |    `false`    |
+| `showTrailingGradient` |                boolean                | Whether to show a gradient on the last edge; overwritten by `showGradient`                                      |    No     |    `false`    |
 
 You can also pass:
 
 - `style` to add inline styles to the marquee container
 - `class` to add classes to the marquee container
 - any other prop, which will be passed to the marquee container
+
+Additionally, you can bind `clientWidth` and `clientHeight` to get the width and height of the marquee container.
 
 ### CSS variables
 
@@ -65,14 +70,14 @@ marquee:
 
 ### Events
 
-| Name         | Description                                                                          | Event `detail`'s parameters                       |
-| :----------- | :----------------------------------------------------------------------------------- | :------------------------------------------------ |
-| `playstart`  | The marquee starts playing                                                           | None                                              |
-| `playpause`  | The marquee pauses playing (`play` set to `false` but animation not ended)           | `progress`: the current progress, between 0 and 1 |
-| `playend`    | The marquee ends its animation (only triggered on animation end if `playsCount` > 0) | None                                              |
-| `progress`   | The current progress of the marquee, live-updated                                    | `progress`: the current progress, between 0 and 1 |
-| `hoverstart` | The mouse enters the marquee                                                         | None                                              |
-| `hoverend`   | The mouse leaves the marquee                                                         | None                                              |
+| Name         | Description                                                                          | Event `detail`'s parameters                                     |
+| :----------- | :----------------------------------------------------------------------------------- | :-------------------------------------------------------------- |
+| `playstart`  | The marquee starts playing                                                           | None                                                            |
+| `playpause`  | The marquee pauses playing (`play` set to `false` but animation not ended)           | `progress`: the current progress, between 0 and 1 for each play |
+| `playend`    | The marquee ends its animation (only triggered on animation end if `playsCount` > 0) | None                                                            |
+| `progress`   | The current progress of the marquee, live-updated                                    | `progress`: the current progress, between 0 and 1 for each play |
+| `hoverstart` | The mouse enters the marquee                                                         | None                                                            |
+| `hoverend`   | The mouse leaves the marquee                                                         | None                                                            |
 
 ### Slots
 

@@ -1,6 +1,7 @@
 <script>
 	import { createEventDispatcher, onDestroy } from "svelte";
 
+	// MARK: Props
 	/**
 	 * Whether the marquee should play
 	 * @type {boolean}
@@ -30,11 +31,38 @@
 	export let direction = "right";
 
 	/**
-	 * Whether to show a gradient on both ends
+	 * Whether to repeat the slot content once or multiple times
+	 * @type {"single" | "multiple"}
+	 * @default "multiple"
+	 */
+	export let mode = "multiple";
+
+	/**
+	 * Whether to show a gradient on both ends; takes precedence
+	 * over {@link showLeadingGradient} and {@link showTrailingGradient}
 	 * @type {boolean}
 	 * @default false
 	 */
 	export let showGradient = false;
+
+	/**
+	 * Whether to show a gradient on the first edge; overwritten by
+	 * {@link showGradient}
+	 * @type {boolean}
+	 * @default false
+	 */
+	export let showLeadingGradient = false;
+
+	/**
+	 * Whether to show a gradient on the last edge; overwritten by
+	 * {@link showGradient}
+	 * @type {boolean}
+	 * @default false
+	 */
+	export let showTrailingGradient = false;
+
+	export let clientWidth = 0;
+	export let clientHeight = 0;
 
 	/** @type {string | undefined} */
 	export let style = undefined;
@@ -42,6 +70,12 @@
 	/** @type {string | null | undefined} */
 	let className = undefined;
 	export { className as class };
+
+	// MARK: Props validation
+	$: if (playsCount < 0) throw new Error('"playsCount" must be greater than or equal to 0');
+	$: if (speed <= 0) throw new Error('"speed" must be strictly greater than 0');
+
+	// MARK: Animation logic
 
 	const dispatch = createEventDispatcher();
 	/** @type {ReturnType<typeof setInterval> | undefined} */
@@ -112,7 +146,6 @@
 				{
 					id: `marquee-${index}`,
 					duration: (duration ?? 1) * 1000,
-					fill: "forwards",
 					iterations: playsCount || Infinity,
 					easing: "linear"
 				}
@@ -123,6 +156,7 @@
 			animation.onfinish = () => {
 				stopInterval();
 				dispatch("playend");
+				play = false;
 			};
 		}
 	}
@@ -131,6 +165,7 @@
 		/** @type {number | undefined} */
 		direction === "left" || direction === "right" ? marqueeWidth / speed : marqueeHeight / speed;
 
+	// MARK: Component unmount
 	onDestroy(() => {
 		stopInterval();
 		for (const animation of animations) {
@@ -141,11 +176,14 @@
 
 <div
 	class="marquee-container {className ?? ''}"
-	style:--gradient-width={showGradient ? "10%" : "0"}
+	style:--_leading-gradient-width={showGradient || showLeadingGradient ? "10%" : undefined}
+	style:--_trailing-gradient-width={showGradient || showTrailingGradient ? "10%" : undefined}
 	style:--_direction={direction === "up" || direction === "down" ? "column" : "row"}
 	style:--_gradient-direction={direction === "up" || direction === "down" ? "bottom" : "right"}
 	{style}
 	role="marquee"
+	bind:clientWidth
+	bind:clientHeight
 	on:mouseenter={() => dispatch("hoverstart")}
 	on:mouseleave={() => dispatch("hoverend")}
 	{...$$restProps}
@@ -158,9 +196,11 @@
 	>
 		<slot />
 	</div>
-	<div bind:this={marquees[1]} class="marquee">
-		<slot />
-	</div>
+	{#if mode === "multiple"}
+		<div bind:this={marquees[1]} class="marquee">
+			<slot />
+		</div>
+	{/if}
 </div>
 
 <style>
@@ -182,8 +222,8 @@
 			background-image: linear-gradient(
 				to var(--_gradient-direction, right),
 				var(--gradient-color, black),
-				transparent var(--gradient-width, 10%),
-				transparent calc(100% - var(--gradient-width, 10%)),
+				transparent var(--gradient-width, var(--_leading-gradient-width, 0)),
+				transparent calc(100% - var(--gradient-width, var(--_trailing-gradient-width, 100%))),
 				var(--gradient-color, black)
 			);
 		}

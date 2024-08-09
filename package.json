@@ -1,6 +1,6 @@
 {
 	"name": "svelte-neomarquee",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
@@ -32,9 +32,9 @@
 		"svelte": "^4.0.0 || ^5"
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-node": "^5.2.0",
-		"@sveltejs/kit": "^2.5.20",
-		"@sveltejs/package": "^2.3.2",
+		"@sveltejs/adapter-node": "^5.2.1",
+		"@sveltejs/kit": "^2.5.21",
+		"@sveltejs/package": "^2.3.3",
 		"@sveltejs/vite-plugin-svelte": "^3.1.1",
 		"@types/eslint": "^9.6.0",
 		"eslint": "^9.8.0",
@@ -48,10 +48,10 @@
 		"svelte-check": "^3.8.5",
 		"tslib": "^2.6.3",
 		"typescript": "^5.5.4",
-		"vite": "^5.3.5"
+		"vite": "^5.4.0"
 	},
 	"svelte": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"type": "module",
-	"packageManager": "pnpm@9.6.0"
+	"packageManager": "pnpm@9.7.0"
 }
