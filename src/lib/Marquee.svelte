@@ -223,7 +223,7 @@
 				to var(--_gradient-direction, right),
 				var(--gradient-color, black),
 				transparent var(--gradient-width, var(--_leading-gradient-width, 0)),
-				transparent calc(100% - var(--gradient-width, var(--_trailing-gradient-width, 100%))),
+				transparent calc(100% - var(--gradient-width, var(--_trailing-gradient-width, 0))),
 				var(--gradient-color, black)
 			);
 		}
