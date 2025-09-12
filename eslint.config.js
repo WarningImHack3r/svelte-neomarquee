@@ -1,14 +1,15 @@
-import js from "@eslint/js";
+import eslint from "@eslint/js";
+import prettierConfig from "eslint-config-prettier/flat";
 import svelte from "eslint-plugin-svelte";
-import prettier from "eslint-config-prettier";
+import { defineConfig, globalIgnores } from "eslint/config";
 import globals from "globals";
+import svelteConfig from "./svelte.config.js";
 
-/** @type {import("eslint").Linter.FlatConfig[]} */
-export default [
-	js.configs.recommended,
-	...svelte.configs["flat/recommended"],
-	prettier,
-	...svelte.configs["flat/prettier"],
+export default defineConfig(
+	eslint.configs.recommended,
+	svelte.configs.recommended,
+	prettierConfig,
+	svelte.configs.prettier,
 	{
 		languageOptions: {
 			globals: {
@@ -18,6 +19,12 @@ export default [
 		}
 	},
 	{
-		ignores: ["build/", ".svelte-kit/", "dist/"]
-	}
-];
+		files: ["**/*.svelte"],
+		languageOptions: {
+			parserOptions: {
+				svelteConfig
+			}
+		}
+	},
+	globalIgnores(["build/", ".svelte-kit/", "dist/"])
+);

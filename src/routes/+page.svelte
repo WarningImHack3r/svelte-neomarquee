@@ -16,7 +16,7 @@
 	on:playend={() => console.log("playend")}
 >
 	<!-- eslint-disable-next-line no-unused-vars -->
-	{#each Array(10) as _, i}
+	{#each Array(10) as _, i (i)}
 		<span>Element {i + 1}</span>
 	{/each}
 </Marquee>
